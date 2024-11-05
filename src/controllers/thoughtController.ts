@@ -65,7 +65,7 @@ export const createThought = async (
     const user = await User.findByIdAndUpdate(
       req.body.userId,
       { $push: { thoughts: newThought._id } },
-      { new: true }
+      { new: true, runValidators: true }
     );
     console.log("User Updated:" + user);
     if (!user) {
@@ -95,10 +95,18 @@ export const updateThought = async (
     const { thoughtId } = req.params;
     console.log("REQ Thought Text:" + thoughtText);
     console.log("REQ Thought Id:" + thoughtId);
-
-    const updatedThought = await Thought.findByIdAndUpdate(thoughtId, {
-      thoughtText,
-    });
+    if (!thoughtText) {
+      res.status(400).json({ message: "Thought text is required" });
+      return;
+    }
+    // As long as there is a thoughtText, attempt to update the thought
+    const updatedThought = await Thought.findByIdAndUpdate(
+      thoughtId,
+      {
+        thoughtText,
+      },
+      { new: true, runValidators: true }
+    );
 
     // If thought is not found, return 404
     if (!updatedThought) {
@@ -160,7 +168,7 @@ export const addReaction = async (
     const thought = await Thought.findByIdAndUpdate(
       thoughtId,
       { $push: { reactions: reaction } }, // with new Date() for createdAt
-      { new: true }
+      { new: true, runValidators: true }
     );
     // If thought is not found, return 404
     if (!thought) {
