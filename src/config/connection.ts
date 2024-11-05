@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 // Wrap Mongoose around local connection to MongoDB - socialnetworkDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/socialnetworkDB")
-  .then(() => console.log("MongoDB connected"))
+  .then(() => console.log("MongoDB connected to Social Network API"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Export connection
