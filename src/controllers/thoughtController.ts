@@ -33,7 +33,7 @@ export const getThoughtById = async (
   res: Response
 ): Promise<void> => {
   try {
-    const thought = await Thought.findById(req.params.id);
+    const thought = await Thought.findById(req.params.thoughtId);
     // If thought is not found, return 404
     if (!thought) {
       res
@@ -91,16 +91,23 @@ export const updateThought = async (
   res: Response
 ): Promise<void> => {
   try {
-    const thought = await Thought.findByIdAndUpdate(req.params.id);
+    const { thoughtText } = req.body;
+    const { thoughtId } = req.params;
+    console.log("REQ Thought Text:" + thoughtText);
+    console.log("REQ Thought Id:" + thoughtId);
+
+    const updatedThought = await Thought.findByIdAndUpdate(thoughtId, {
+      thoughtText,
+    });
+
     // If thought is not found, return 404
-    if (!thought) {
+    if (!updatedThought) {
       res
         .status(404)
-        .json({ message: `Thought with id ${req.params.id} not found` });
+        .json({ message: `Thought with id ${thoughtId} not found` });
       return;
     }
-    // If thought is found, update thought
-    const updatedThought = await Thought.findByIdAndUpdate(req.params);
+    // If thought is found, respond that thought has been updated
     console.log("Thought Updated:" + updatedThought);
     res.status(200).json("Updated Thought: " + updatedThought);
   } catch (error) {
@@ -118,12 +125,12 @@ export const deleteThought = async (
   res: Response
 ): Promise<void> => {
   try {
-    const thought = await Thought.findByIdAndDelete(req.params.id);
+    const thought = await Thought.findByIdAndDelete(req.params.thoughtId);
     // If thought is not found, return 404
     if (!thought) {
       res
         .status(404)
-        .json({ message: `Thought with id ${req.params.id} not found` });
+        .json({ message: `Thought with id ${req.params.thoughtId} not found` });
       return;
     }
     // If thought is found, delete thought
@@ -144,14 +151,14 @@ export const addReaction = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { thoughtId } = req.params;
     // adding default createdAt date if not provided
     const reaction = {
       ...req.body,
       createdAt: req.body.createdAt || new Date(),
     };
     const thought = await Thought.findByIdAndUpdate(
-      id,
+      thoughtId,
       { $push: { reactions: reaction } }, // with new Date() for createdAt
       { new: true }
     );
@@ -159,7 +166,7 @@ export const addReaction = async (
     if (!thought) {
       res
         .status(404)
-        .json({ message: `Thought with id ${req.params.id} not found` });
+        .json({ message: `Thought with id ${req.params.thoughtId} not found` });
       return;
     }
     // If thought is found, add reaction
