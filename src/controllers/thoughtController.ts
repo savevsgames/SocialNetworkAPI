@@ -144,9 +144,15 @@ export const addReaction = async (
   res: Response
 ): Promise<void> => {
   try {
+    const { id } = req.params;
+    // adding default createdAt date if not provided
+    const reaction = {
+      ...req.body,
+      createdAt: req.body.createdAt || new Date(),
+    };
     const thought = await Thought.findByIdAndUpdate(
-      req.params.id,
-      { $push: { reactions: req.body } },
+      id,
+      { $push: { reactions: reaction } }, // with new Date() for createdAt
       { new: true }
     );
     // If thought is not found, return 404
@@ -174,9 +180,11 @@ export const removeReaction = async (
   res: Response
 ): Promise<void> => {
   try {
+    const { id, reactionId } = req.params;
+
     const thought = await Thought.findByIdAndUpdate(
-      req.params.id,
-      { $pull: { reactions: { _id: req.params.reactionId } } }, // Pull removes the reaction by _id
+      id,
+      { $pull: { reactions: { _id: reactionId } } },
       { new: true }
     );
     // If thought is not found, return 404
