@@ -17,7 +17,7 @@ export const getThoughts = async (
   try {
     const thoughts = await Thought.find(); // Find all thoughts
     console.log("Thoughts Found:" + thoughts);
-    res.status(200).json("Thoughts Found:" + thoughts);
+    res.status(200).json(thoughts);
   } catch (error) {
     res.status(500).json({ message: "Error getting thoughts", error });
   }
@@ -43,7 +43,7 @@ export const getThoughtById = async (
     }
     // If thought is found, return thought
     console.log("Thought Found:" + thought);
-    res.status(200).json("Thought Found:" + thought);
+    res.status(200).json(thought);
   } catch (error) {
     res.status(500).json({ message: "Error getting thought", error });
   }
@@ -75,7 +75,7 @@ export const createThought = async (
       return;
     }
     // If thought is found, respond that thought has been created
-    res.status(201).json("New Thought Created: " + newThought);
+    res.status(201).json(newThought);
   } catch (error) {
     res.status(500).json({ message: "Error creating thought", error });
   }
@@ -117,7 +117,7 @@ export const updateThought = async (
     }
     // If thought is found, respond that thought has been updated
     console.log("Thought Updated:" + updatedThought);
-    res.status(200).json("Updated Thought: " + updatedThought);
+    res.status(200).json(updatedThought);
   } catch (error) {
     res.status(500).json({ message: "Error updating thought", error });
   }
@@ -143,7 +143,7 @@ export const deleteThought = async (
     }
     // If thought is found, delete thought
     console.log("Thought Deleted:" + thought);
-    res.status(200).json("Deleted Thought: " + thought);
+    res.status(200).json(thought);
   } catch (error) {
     res.status(500).json({ message: "Error deleting thought", error });
   }
@@ -179,7 +179,7 @@ export const addReaction = async (
     }
     // If thought is found, add reaction
     console.log("Reaction Added:" + thought);
-    res.status(200).json("Reaction Added: " + thought);
+    res.status(200).json(thought);
   } catch (error) {
     res.status(500).json({ message: "Error adding reaction", error });
   }
@@ -195,23 +195,23 @@ export const removeReaction = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id, reactionId } = req.params;
+    const { thoughtId, reactionId } = req.params;
 
     const thought = await Thought.findByIdAndUpdate(
-      id,
-      { $pull: { reactions: { _id: reactionId } } },
+      thoughtId,
+      { $pull: { reactions: { _id: reactionId } } }, // remove reaction by id
       { new: true }
     );
     // If thought is not found, return 404
     if (!thought) {
       res
         .status(404)
-        .json({ message: `Thought with id ${req.params.id} not found` });
+        .json({ message: `Thought with id ${thoughtId} not found` });
       return;
     }
     // If thought is found, remove reaction
     console.log("Reaction Removed:" + thought);
-    res.status(200).json("Reaction Removed: " + thought);
+    res.status(200).json(thought);
   } catch (error) {
     res.status(500).json({ message: "Error removing reaction", error });
   }

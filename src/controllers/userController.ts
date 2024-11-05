@@ -31,7 +31,7 @@ export const createUser = async (
   try {
     const newUser = await User.create(req.body);
     console.log("New User Created:", newUser);
-    res.status(201).json("New User Created: " + newUser);
+    res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ message: "Error creating user", error });
   }
@@ -87,7 +87,7 @@ export const updateUser = async (
         .json({ message: `User with id ${req.params.id} not found` });
       return;
     }
-    console.log("User Updated:", updatedUser);
+    console.log(updatedUser);
     res.status(200).json("Updated User: " + updatedUser);
   } catch (error) {
     res
@@ -115,7 +115,7 @@ export const deleteUser = async (
       return;
     }
     console.log("User Deleted:", deletedUser);
-    res.status(200).json("Deleted User: " + deletedUser);
+    res.status(200).json(deletedUser);
   } catch (error) {
     res
       .status(500)
@@ -145,10 +145,10 @@ export const addFriend = async (req: Request, res: Response): Promise<void> => {
     }
     // If user is found, return user with new friend added
     console.log("Friend Added:", user);
-    res.status(200).json("Added Friend: " + req.params.friendId);
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({
-      message: `Error adding friend to user with id ${req.params.id}`,
+      message: `Error adding friend to user with id ${req.params.userId}`,
       error,
     });
   }
@@ -178,11 +178,11 @@ export const removeFriend = async (
       return;
     }
     // If user is found, return user with friend removed
-    console.log("Friend Removed:", user);
-    res.status(200).json("Removed Friend: " + req.params.friendId);
+    console.log("Friend Removed from:", user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({
-      message: `Error removing friend from user with id ${req.params.id}`,
+      message: `Error removing friend with id ${req.params.friendId} from user with id ${req.params.userId}`,
       error,
     });
   }
