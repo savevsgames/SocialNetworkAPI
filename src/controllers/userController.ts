@@ -30,6 +30,7 @@ export const createUser = async (
 ): Promise<void> => {
   try {
     const newUser = await User.create(req.body);
+    console.log("New User Created:", newUser);
     res.status(201).json("New User Created: " + newUser);
   } catch (error) {
     res.status(500).json({ message: "Error creating user", error });
@@ -56,6 +57,7 @@ export const getUserById = async (
       return;
     }
     // If user is found, return user
+    console.log("User Found:", user);
     res.status(200).json(user);
   } catch (error) {
     res
@@ -85,6 +87,7 @@ export const updateUser = async (
         .json({ message: `User with id ${req.params.id} not found` });
       return;
     }
+    console.log("User Updated:", updatedUser);
     res.status(200).json("Updated User: " + updatedUser);
   } catch (error) {
     res
@@ -111,6 +114,7 @@ export const deleteUser = async (
         .json({ message: `User with id ${req.params.id} not found` });
       return;
     }
+    console.log("User Deleted:", deletedUser);
     res.status(200).json("Deleted User: " + deletedUser);
   } catch (error) {
     res
@@ -128,7 +132,7 @@ export const deleteUser = async (
 export const addFriend = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.params.id,
+      req.params.userId,
       { $addToSet: { friends: req.params.friendId } }, // addToSet prevents duplicates
       { new: true }
     );
@@ -136,10 +140,11 @@ export const addFriend = async (req: Request, res: Response): Promise<void> => {
     if (!user) {
       res
         .status(404)
-        .json({ message: `User with id ${req.params.id} not found` });
+        .json({ message: `User with id ${req.params.userId} not found` });
       return;
     }
     // If user is found, return user with new friend added
+    console.log("Friend Added:", user);
     res.status(200).json("Added Friend: " + req.params.friendId);
   } catch (error) {
     res.status(500).json({
@@ -161,7 +166,7 @@ export const removeFriend = async (
 ): Promise<void> => {
   try {
     const user = await User.findByIdAndUpdate(
-      req.params.id,
+      req.params.userId,
       { $pull: { friends: req.params.friendId } },
       { new: true }
     );
@@ -169,10 +174,11 @@ export const removeFriend = async (
     if (!user) {
       res
         .status(404)
-        .json({ message: `User with id ${req.params.id} not found` });
+        .json({ message: `User with id ${req.params.userId} not found` });
       return;
     }
     // If user is found, return user with friend removed
+    console.log("Friend Removed:", user);
     res.status(200).json("Removed Friend: " + req.params.friendId);
   } catch (error) {
     res.status(500).json({
