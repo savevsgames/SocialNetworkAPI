@@ -2,11 +2,10 @@ import db from "../config/connection";
 import User from "../models/User";
 import Thought from "../models/Thought";
 import cleanDB from "./cleanDB";
-import mongoose, { mongo } from "mongoose";
 
 const seedData = async () => {
+  const connection = await db();
   try {
-    await db();
     await cleanDB();
 
     // Sample Users
@@ -126,17 +125,15 @@ const seedData = async () => {
     console.log("Seeded users are updated with thoughts...");
 
     // Close the connection
-    mongoose.connection.close();
+    await connection.close(); // Close the connection after seeding
     console.log("DB Connection closed...");
   } catch (error) {
     console.error("Error seeding data:", error);
-    mongoose.connection.close();
+    await connection.close(); // Close the connection if error
     console.log("DB Connection closed...");
   }
 };
 // Run the seed function
 seedData().catch((error) => {
-  console.error("Error seeding data:", error);
-  mongoose.connection.close();
-  console.log("DB Connection closed...");
+  console.error("Unhandled error seeding data: ", error);
 });
