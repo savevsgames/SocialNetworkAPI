@@ -8,6 +8,7 @@ interface IUser extends Document {
   email: string;
   thoughts: string[]; // Array of _id values
   friends: string[]; // Array of _id values
+  // friendCount?: number; // Virtual property - this is not needed for the interface - it is created in the virtual method
 }
 
 // Create User Schema
@@ -41,10 +42,10 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      virtuals: true, // Allow virtual properties when data is requested
+      virtuals: true, // Allow virtual properties when data is requested - EAGER FETCHING makes them available immediately
     },
     toObject: {
-      virtuals: true, // Allow virtual properties when data is requested
+      virtuals: true, // Allow virtual properties when data is requested - used for debugging NOT response
     },
   }
 );
@@ -61,7 +62,7 @@ userSchema.virtual("friendCount").get(function () {
 // We pass in next as a parameter to tell Mongoose to move on to the next middleware function when this function is done
 userSchema.pre("findOneAndDelete", async function (next) {
   // Get the user ID from the query - this is a Mongoose method that allows us to access the query object and its properties
-  const userId = this.getQuery()["_id"];
+  const userId = this.getQuery()["_id"]; // using this refers to the user being deleted
   try {
     // Find the user by ID and ensure it exists before accessing thoughts
     const user = await this.model.findById(userId);

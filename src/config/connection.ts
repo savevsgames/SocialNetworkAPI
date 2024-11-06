@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 
-// This connection string is only for local development
-// If this does deploy to a live server, the connection string will need to be updated
-// Wrap Mongoose around local connection to MongoDB - socialnetworkDB
-mongoose
-  .connect("mongodb://127.0.0.1:27017/socialnetworkDB")
-  .then(() => console.log("MongoDB connected to Social Network API"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+const db = async (): Promise<typeof mongoose.connection> => {
+  try {
+    await mongoose.connect(
+      process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/socialnetworkDB"
+    );
+    console.log("MongoDB connected to Social Network API");
+    return mongoose.connection;
+  } catch (error) {
+    console.error("Error connecting to MongoDB", error);
+    throw new Error("Error connecting to MongoDB");
+  }
+};
 
-// Export connection
-export default mongoose.connection;
+export default db;
