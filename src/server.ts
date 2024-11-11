@@ -19,8 +19,15 @@ app.use((req, res, next) => {
   next();
 });
 
-db.once("open", () => {
-  app.listen(PORT, () => {
-    console.log(`API server running on port ${PORT}!`);
-  });
-});
+const startBDServer = async () => {
+  try {
+    await db();
+    app.listen(PORT, () => {
+      console.log(`Social Network API server running on port ${PORT}!`);
+    });
+  } catch (error) {
+    console.error("Error connecting to database", error);
+  }
+};
+
+startBDServer();
